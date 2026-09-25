@@ -2,7 +2,7 @@ import React from 'react';
 import { Phone, FileText } from 'lucide-react';
 import { projectConfig } from '../data/projectData';
 
-export const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+export const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
   <svg
     viewBox="0 0 24 24"
     fill="currentColor"
@@ -22,44 +22,45 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({ onOpenEnquiry 
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(projectConfig.whatsappMessage)}`;
 
   return (
-    <nav
+    <aside
       aria-label="Mobile Quick Action Bar"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0B3B2E] border-t border-green-700/60 shadow-[0_-4px_20px_rgba(0,0,0,0.35)] px-2 py-2 safe-area-pb"
+      className="md:hidden fixed bottom-0 inset-x-0 z-50 p-2 pointer-events-none"
+      style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
     >
-      <div className="grid grid-cols-3 gap-1.5 max-w-md mx-auto">
-        {/* Call Now */}
+      <div className="max-w-md mx-auto bg-[#0A3326] border border-emerald-600/30 rounded-2xl p-1.5 shadow-[0_-4px_25px_rgba(0,0,0,0.45)] backdrop-blur-lg grid grid-cols-3 gap-1.5 pointer-events-auto">
+        {/* 1. Call Now */}
         <a
           id="mobile-bar-call"
           href={`tel:${projectConfig.phone}`}
-          className="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-white/10 active:bg-white/20 text-white transition-colors"
+          className="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl bg-[#124233] hover:bg-[#16503e] active:scale-95 text-white transition-all duration-150 border border-white/10"
         >
           <Phone className="w-4 h-4 text-[#ECC850] mb-0.5" />
-          <span className="text-[11px] font-bold tracking-tight">Call Now</span>
+          <span className="text-[11px] font-bold text-white tracking-tight leading-tight">Call Now</span>
         </a>
 
-        {/* Real WhatsApp Button */}
+        {/* 2. WhatsApp */}
         <a
           id="mobile-bar-whatsapp"
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:bg-[#1caa4e] text-white shadow-md transition-all duration-200 active:scale-95"
+          className="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white shadow-sm transition-all duration-150"
           aria-label="Chat on WhatsApp"
         >
-          <WhatsAppIcon className="w-5 h-5 mb-0.5 text-white" />
-          <span className="text-[11px] font-bold tracking-tight">WhatsApp</span>
+          <WhatsAppIcon className="w-4 h-4 mb-0.5 text-white" />
+          <span className="text-[11px] font-bold text-white tracking-tight leading-tight">WhatsApp</span>
         </a>
 
-        {/* Enquire Now */}
+        {/* 3. Enquire Now */}
         <button
           id="mobile-bar-enquire"
           onClick={() => onOpenEnquiry('Sticky Mobile Bottom Bar')}
-          className="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-[#ECC850] active:bg-[#d8b02c] text-[#0B3B2E] font-extrabold shadow-sm transition-colors cursor-pointer"
+          className="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl bg-[#ECC850] hover:bg-[#dfba38] active:scale-95 text-[#0B3B2E] font-black shadow-sm transition-all duration-150 cursor-pointer"
         >
-          <FileText className="w-4 h-4 mb-0.5" />
-          <span className="text-[11px] font-extrabold tracking-tight">Enquire Now</span>
+          <FileText className="w-4 h-4 mb-0.5 text-[#0B3B2E]" />
+          <span className="text-[11px] font-black text-[#0B3B2E] tracking-tight leading-tight">Enquire Now</span>
         </button>
       </div>
-    </nav>
+    </aside>
   );
 };
