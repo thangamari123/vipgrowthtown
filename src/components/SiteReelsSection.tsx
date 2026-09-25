@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
-  Maximize2,
   X
 } from 'lucide-react';
 
@@ -72,7 +71,6 @@ const REELS: ReelItem[] = [
 
 export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquiry }) => {
   const [currentMobileIndex, setCurrentMobileIndex] = useState(0);
-  const [activePlayingId, setActivePlayingId] = useState<string | null>(null);
   const [modalVideoIndex, setModalVideoIndex] = useState<number | null>(null);
   const [likedStates, setLikedStates] = useState<{ [key: string]: boolean }>({});
   const touchStartXRef = useRef<number | null>(null);
@@ -84,12 +82,10 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
   };
 
   const nextMobileSlide = () => {
-    setActivePlayingId(null);
     setCurrentMobileIndex((prev) => (prev + 1) % REELS.length);
   };
 
   const prevMobileSlide = () => {
-    setActivePlayingId(null);
     setCurrentMobileIndex((prev) => (prev - 1 + REELS.length) % REELS.length);
   };
 
@@ -117,166 +113,112 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
   const currentModalReel = modalVideoIndex !== null ? REELS[modalVideoIndex] : null;
 
   const renderReelCard = (reel: ReelItem, idx: number) => {
-    const isPlaying = activePlayingId === reel.id;
     const isLiked = likedStates[reel.id] ?? false;
 
     return (
-      <div className="group relative aspect-[9/16] w-full rounded-3xl overflow-hidden bg-black shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/60">
-        {isPlaying ? (
-          /* Active YouTube Embed Player */
-          <div className="relative w-full h-full bg-black">
-            <iframe
-              src={`https://www.youtube-nocookie.com/embed/${reel.youtubeId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`}
-              title={reel.title}
-              className="w-full h-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-            {/* Top Control Bar */}
-            <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setModalVideoIndex(idx);
-                }}
-                className="w-8 h-8 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-black transition-all cursor-pointer border border-white/30 shadow-md"
-                aria-label="Expand Fullscreen"
-              >
-                <Maximize2 className="w-3.5 h-3.5 text-[#ECC850]" />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActivePlayingId(null);
-                }}
-                className="w-8 h-8 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-black transition-all cursor-pointer border border-white/30 shadow-md"
-                aria-label="Close Video"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+      <div
+        onClick={() => setModalVideoIndex(idx)}
+        className="group relative aspect-[9/16] w-full rounded-3xl overflow-hidden bg-black shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white/60 cursor-pointer"
+      >
+        {/* Poster Preview */}
+        <img
+          src={reel.poster}
+          alt={reel.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+
+        {/* Top & Bottom Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-black/70 pointer-events-none"></div>
+
+        {/* Top Badges Bar */}
+        <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
+          <div className="flex items-center gap-1.5">
+            <span className="px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+              SHORTS {idx + 1}
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-black/60 text-emerald-200 text-[10px] font-semibold backdrop-blur-md border border-white/10">
+              {reel.tag}
+            </span>
           </div>
-        ) : (
-          /* Poster Preview & Interactive Overlay */
-          <div
-            onClick={() => setActivePlayingId(reel.id)}
-            className="w-full h-full relative cursor-pointer"
+
+          <a
+            href={reel.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="w-8 h-8 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-md"
+            aria-label="Open on YouTube"
           >
-            <img
-              src={reel.poster}
-              alt={reel.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
 
-            {/* Top & Bottom Vignette Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-black/70 pointer-events-none"></div>
-
-            {/* Top Badges Bar */}
-            <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-              <div className="flex items-center gap-1.5">
-                <span className="px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-md">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                  SHORTS {idx + 1}
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-black/60 text-emerald-200 text-[10px] font-semibold backdrop-blur-md border border-white/10">
-                  {reel.tag}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                {/* Fullscreen Modal Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setModalVideoIndex(idx);
-                  }}
-                  className="w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-md"
-                  aria-label="Open Fullscreen Viewer"
-                >
-                  <Maximize2 className="w-3.5 h-3.5 text-[#ECC850]" />
-                </button>
-
-                {/* External YouTube Link Button */}
-                <a
-                  href={reel.youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-8 h-8 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-md"
-                  aria-label="Open on YouTube"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* Center Play Button Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-              <div className="w-16 h-16 rounded-full bg-red-600 group-hover:scale-110 text-white flex items-center justify-center shadow-2xl transition-all duration-300 border-2 border-white/40 ring-4 ring-red-600/30">
-                <Play className="w-8 h-8 fill-current ml-1" />
-              </div>
-            </div>
-
-            {/* Right Floating Social Interaction Strip */}
-            <div className="absolute right-3 bottom-24 flex flex-col items-center gap-3 z-10">
-              {/* Like Button */}
-              <button
-                onClick={(e) => toggleLike(e, reel.id)}
-                className="flex flex-col items-center text-white cursor-pointer"
-              >
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
-                    isLiked ? 'bg-red-600 text-white' : 'bg-black/50 hover:bg-black/70 text-white border border-white/20'
-                  }`}
-                >
-                  <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                </div>
-                <span className="text-[10px] font-bold mt-1 text-gray-200">
-                  {isLiked ? (parseInt(reel.likes) + 1).toString() : reel.likes}
-                </span>
-              </button>
-
-              {/* Views Count */}
-              <div className="flex flex-col items-center text-white">
-                <div className="w-9 h-9 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-md border border-white/20">
-                  <Eye className="w-4 h-4 text-emerald-300" />
-                </div>
-                <span className="text-[10px] font-bold mt-1 text-gray-200">{reel.views}</span>
-              </div>
-            </div>
-
-            {/* Bottom Reel Caption & Call-to-Action */}
-            <div className="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 space-y-2 text-white">
-              {/* Stat Highlight Pill */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#166534]/90 border border-[#ECC850]/40 text-[#ECC850] text-[10px] font-bold shadow-md backdrop-blur-sm">
-                <ShieldCheck className="w-3 h-3 text-[#ECC850]" />
-                <span>{reel.statBadge}</span>
-              </div>
-
-              {/* Title & Description */}
-              <div>
-                <h3 className="font-serif font-bold text-sm sm:text-base text-white leading-snug">
-                  {reel.title}
-                </h3>
-                <p className="text-[11px] text-gray-300 line-clamp-2 mt-0.5 leading-relaxed">
-                  {reel.subtitle}
-                </p>
-              </div>
-
-              {/* Action Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenEnquiry(`YouTube Shorts CTA: ${reel.title}`);
-                }}
-                className="w-full bg-[#ECC850] hover:bg-[#dfba38] text-[#0B3B2E] font-black text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-transform active:scale-95 mt-1"
-              >
-                <span>Book Site Visit Transport</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+        {/* Center Play Button Overlay */}
+        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+          <div className="w-16 h-16 rounded-full bg-red-600 group-hover:scale-110 text-white flex items-center justify-center shadow-2xl transition-all duration-300 border-2 border-white/40 ring-4 ring-red-600/30">
+            <Play className="w-8 h-8 fill-current ml-1" />
           </div>
-        )}
+        </div>
+
+        {/* Right Floating Social Interaction Strip */}
+        <div className="absolute right-3 bottom-24 flex flex-col items-center gap-3 z-10">
+          {/* Like Button */}
+          <button
+            onClick={(e) => toggleLike(e, reel.id)}
+            className="flex flex-col items-center text-white cursor-pointer"
+          >
+            <div
+              className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
+                isLiked ? 'bg-red-600 text-white' : 'bg-black/50 hover:bg-black/70 text-white border border-white/20'
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+            </div>
+            <span className="text-[10px] font-bold mt-1 text-gray-200">
+              {isLiked ? (parseInt(reel.likes) + 1).toString() : reel.likes}
+            </span>
+          </button>
+
+          {/* Views Count */}
+          <div className="flex flex-col items-center text-white">
+            <div className="w-9 h-9 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-md border border-white/20">
+              <Eye className="w-4 h-4 text-emerald-300" />
+            </div>
+            <span className="text-[10px] font-bold mt-1 text-gray-200">{reel.views}</span>
+          </div>
+        </div>
+
+        {/* Bottom Reel Caption & Call-to-Action */}
+        <div className="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 space-y-2 text-white">
+          {/* Stat Highlight Pill */}
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#166534]/90 border border-[#ECC850]/40 text-[#ECC850] text-[10px] font-bold shadow-md backdrop-blur-sm">
+            <ShieldCheck className="w-3 h-3 text-[#ECC850]" />
+            <span>{reel.statBadge}</span>
+          </div>
+
+          {/* Title & Description */}
+          <div>
+            <h3 className="font-serif font-bold text-sm sm:text-base text-white leading-snug">
+              {reel.title}
+            </h3>
+            <p className="text-[11px] text-gray-300 line-clamp-2 mt-0.5 leading-relaxed">
+              {reel.subtitle}
+            </p>
+          </div>
+
+          {/* Action Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenEnquiry(`YouTube Shorts CTA: ${reel.title}`);
+            }}
+            className="w-full bg-[#ECC850] hover:bg-[#dfba38] text-[#0B3B2E] font-black text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-transform active:scale-95 mt-1"
+          >
+            <span>Book Site Visit Transport</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
     );
   };
@@ -345,10 +287,7 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
               {REELS.map((reel, idx) => (
                 <button
                   key={reel.id}
-                  onClick={() => {
-                    setActivePlayingId(null);
-                    setCurrentMobileIndex(idx);
-                  }}
+                  onClick={() => setCurrentMobileIndex(idx)}
                   className={`transition-all duration-300 rounded-full cursor-pointer ${
                     currentMobileIndex === idx
                       ? 'w-7 h-2.5 bg-[#0B3B2E]'
@@ -387,11 +326,17 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
 
       </div>
 
-      {/* FULLSCREEN SHORTS VIEWER MODAL */}
+      {/* FULLSCREEN SHORTS VIEWER MODAL (Single Video Instance) */}
       {currentModalReel && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-3 sm:p-6">
+        <div
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-3 sm:p-6"
+          onClick={() => setModalVideoIndex(null)}
+        >
           {/* Top Close Bar */}
-          <div className="w-full max-w-lg flex items-center justify-between mb-3 text-white">
+          <div
+            className="w-full max-w-md flex items-center justify-between mb-3 text-white"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-wider">
                 YouTube Shorts
@@ -410,7 +355,10 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
           </div>
 
           {/* Centered 9:16 Video Player with Prev / Next */}
-          <div className="relative w-full max-w-[340px] sm:max-w-[380px] aspect-[9/16] max-h-[75vh] flex items-center justify-center">
+          <div
+            className="relative w-full max-w-[340px] sm:max-w-[380px] aspect-[9/16] max-h-[75vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <iframe
               src={`https://www.youtube-nocookie.com/embed/${currentModalReel.youtubeId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
               title={currentModalReel.title}
@@ -421,7 +369,10 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
 
             {/* Modal Prev / Next Buttons */}
             <button
-              onClick={() => setModalVideoIndex((prev) => (prev! - 1 + REELS.length) % REELS.length)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setModalVideoIndex((prev) => (prev! - 1 + REELS.length) % REELS.length);
+              }}
               className="absolute -left-4 sm:-left-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all cursor-pointer z-30"
               aria-label="Previous Video"
             >
@@ -429,7 +380,10 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
             </button>
 
             <button
-              onClick={() => setModalVideoIndex((prev) => (prev! + 1) % REELS.length)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setModalVideoIndex((prev) => (prev! + 1) % REELS.length);
+              }}
               className="absolute -right-4 sm:-right-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all cursor-pointer z-30"
               aria-label="Next Video"
             >
@@ -438,7 +392,10 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
           </div>
 
           {/* Modal Bottom CTA Actions */}
-          <div className="mt-4 flex items-center gap-3">
+          <div
+            className="mt-4 flex items-center gap-3"
+            onClick={(e) => e.stopPropagation()}
+          >
             <a
               href={currentModalReel.youtubeUrl}
               target="_blank"
@@ -451,8 +408,9 @@ export const SiteReelsSection: React.FC<SiteReelsSectionProps> = ({ onOpenEnquir
 
             <button
               onClick={() => {
+                const title = currentModalReel.title;
                 setModalVideoIndex(null);
-                onOpenEnquiry(`Modal Shorts CTA: ${currentModalReel.title}`);
+                onOpenEnquiry(`Modal Shorts CTA: ${title}`);
               }}
               className="px-5 py-2 rounded-xl bg-[#ECC850] hover:bg-[#dfba38] text-[#0B3B2E] text-xs font-bold shadow-lg cursor-pointer flex items-center gap-1.5 transition-all"
             >
