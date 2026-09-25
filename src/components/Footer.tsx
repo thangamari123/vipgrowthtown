@@ -4,12 +4,10 @@ import {
   MapPin,
   ShieldCheck,
   Mail,
-  ArrowUp,
   ChevronDown,
   Building2,
   Compass,
-  Info,
-  Sparkles
+  Info
 } from 'lucide-react';
 import { projectConfig } from '../data/projectData';
 import { officialFaqBanner } from '../data/officialFaqData';
@@ -25,10 +23,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenEnquiry, onNavigate }) => 
 
   const toggleSection = (section: string) => {
     setOpenSection((prev) => (prev === section ? null : section));
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const quickLinks = [
@@ -248,17 +242,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenEnquiry, onNavigate }) => 
             )}
           </div>
 
-          {/* Mobile Back to Top Button */}
-          <div className="pt-2 text-center">
-            <button
-              onClick={scrollToTop}
-              className="inline-flex items-center gap-1.5 text-[11px] text-gray-300 hover:text-white bg-white/10 py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
-            >
-              <span>Back to Top</span>
-              <ArrowUp className="w-3 h-3 text-[#ECC850]" />
-            </button>
-          </div>
-
         </div>
 
         {/* ======================================================== */}
@@ -355,8 +338,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenEnquiry, onNavigate }) => 
             </div>
           </div>
 
-          {/* Col 4: Project Summary & Back to Top */}
-          <div className="lg:col-span-2 space-y-3 sm:space-y-4 text-left lg:text-right flex flex-col justify-between">
+          {/* Col 4: Project Summary */}
+          <div className="lg:col-span-2 space-y-3 sm:space-y-4 text-left lg:text-right">
             <div>
               <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-400 block mb-0.5">Phase 2 Open</span>
               <span className="text-xl sm:text-2xl font-black text-[#ECC850] block">
@@ -364,14 +347,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenEnquiry, onNavigate }) => 
               </span>
               <span className="text-[10px] sm:text-[11px] text-gray-300">6.32 Acres • DTCP 246/2026</span>
             </div>
-
-            <button
-              onClick={scrollToTop}
-              className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-lg transition-colors cursor-pointer self-start lg:self-end"
-            >
-              <span>Back to Top</span>
-              <ArrowUp className="w-3.5 h-3.5" />
-            </button>
           </div>
 
         </div>
